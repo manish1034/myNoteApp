@@ -1,0 +1,130 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>NoteaPP</title>
+</head>
+<style>
+    .mar {
+        margin-left: 45%;
+    }
+    
+    .h {
+        margin-right: 0.7rem;
+    }
+    
+    .h2 {
+        margin-right: 1.7rem;
+        height: 500px;
+    }
+</style>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <h3 class="navbar-brand mar">NoteaPP</h3>
+
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="container mt-5 col-5">
+            <div class="input-group mb-3">
+                <h3 class="h">Title</h3>
+                <input type="text" class="form-control" id="title" placeholder="Give a Title" aria-label="Example text with button addon" aria-describedby="button-addon1">
+            </div>
+
+            <div class="input-group mb-3">
+                <textarea type="text" id="Desc" class="form-control h2" placeholder="How's your day" aria-label="Recipient's username" aria-describedby="button-addon2"></textarea>
+            </div>
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick=save()>Save</button>
+            <h3 class="mt-5">
+                List
+            </h3>
+            <section class="main">
+
+
+            </section>
+        </div>
+    </main>
+</body>
+
+<script>
+    const btn = document.getElementById("button-addon2");
+    const title = document.getElementById("title");
+    const Desc = document.getElementById("Desc");
+    let edit = false;
+    let show1 = document.querySelector(".main")
+    let storedData = JSON.parse(localStorage.getItem("notes") || "[]");
+
+
+    const show = () => {
+        document.querySelectorAll(".main2").forEach(element => {
+            element.remove();
+        })
+        storedData.forEach((element, index) => {
+
+            const createDiv = document.createElement("div");
+            createDiv.classList.add("main2");
+            const content = `<div class="list-group list-group-flush mt-3 ">
+                <ul>
+                    <li class="list-group-item d-flex justify-content-between ">
+                        ${element.Title}
+                        </li>
+                            <li class="list-group-item d-flex justify-content-between ">
+                                ${element.Description}
+                            </li>
+                            <div class="d-flex mb-4 ">
+                                <button type="button " class="btn btn-secondary gap-5 col-md-5 mx-auto mt-2 " onclick=rem(${index}) >Remove</button>
+                                <button type="button " class="btn btn-outline-primary gap-5 col-md-5 mx-auto mt-2 " onclick=update(${index},"${element.Title}","${element.Description}") >Edit</button>
+                            </div>
+                            </ul>
+                        </div>`;
+            createDiv.insertAdjacentHTML("afterbegin", content);
+            show1.appendChild(createDiv);
+
+            title.value = "", Desc.value = "";
+        });
+    }
+    show();
+    const rem = (id) => {
+        console.log(id);
+        storedData.splice(id, 1);
+        localStorage.setItem("notes", JSON.stringify(storedData));
+        show();
+    }
+
+    const update = (id, Title, Description) => {
+        edit = true;
+        Id = id;
+        title.value = Title,
+            Desc.value = Description;
+        btn.innerHTML = "Update ";
+
+    }
+
+    const save = () => {
+        let tValue = title.value,
+            dValue = Desc.value;
+        let Data = {
+            Title: tValue,
+            Description: dValue
+        };
+        if (!edit) {
+            storedData.push(Data);
+        } else {
+            edit = false;
+            storedData[Id] = Data;
+        }
+        localStorage.setItem("notes", JSON.stringify(storedData));
+        btn.innerHTML = `
+            Save `;
+        show();
+    }
+</script>
+
+</html>
